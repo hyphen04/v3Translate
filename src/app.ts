@@ -33,3 +33,5 @@ const { PAGE_COUNT = '5', PORT = '8000' } = process.env;
     process.exit(1);
   }
 })();
+
+export default app;
