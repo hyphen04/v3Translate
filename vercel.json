@@ -3,7 +3,6 @@
     "builds": [
       {
         "src": "./src/app.ts",
-        "name": "v3",
         "use": "@vercel/node"
       }
     ],
