@@ -15,7 +15,7 @@ const handler = async (request: any, reply: any) => {
 		...request.query,
 		...request.body,
 	};
-	const { text, from = "auto", to = "zh-CN", lite = false } = options;
+	const { text, from = "auto", to = "es", lite = false } = options;
 
 	if (!text) {
 		reply
