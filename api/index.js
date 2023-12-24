@@ -1,3 +1,10 @@
-import app from "../src/app";
+const express = require("express");
+const apiRoutes = require("./routers/api");
+const indexRoutes = require("./routers/index");
 
-export default app;
+const app = express();
+
+app.use("/api", apiRoutes);
+app.use("/", indexRoutes);
+
+module.exports = app;
