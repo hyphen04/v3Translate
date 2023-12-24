@@ -2,7 +2,7 @@
     "rewrites": [
         {
             "source": "/(.*)",
-            "destination": "/src/routers/api.ts"
+            "destination": "/routers/api.ts"
         }
     ]
 }
