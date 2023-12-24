@@ -1,9 +1,19 @@
 {
-    "version": 2,
-    "builds": [{ "src": "app.ts", "use": "@vercel/node" }],
-    "rewrites": [
-      { "source": "/api/(.*)", "destination": "/src/routers/api.ts" },
-      { "source": "/(.*)", "destination": "/src/routers/index.ts" }
-    ]
-  }
-  
+  "version": 2,
+  "builds": [
+    {
+      "src": "./src/app.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api.ts"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.ts"
+    }
+  ]
+}
