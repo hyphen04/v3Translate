@@ -11,8 +11,12 @@
     ],
     "routes": [
         {
-            "src": "/(.*)",
+            "src": "/api/(.*)",
             "dest": "api/serverless.js"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "src/public/$1"
         }
     ]
 }
