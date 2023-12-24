@@ -1,8 +1,13 @@
+// vercel.json
 {
-    "rewrites": [
-        {
-            "source": "/(.*)",
-            "destination": "/routers/api.ts"
-        }
+    "version": 2,
+    "builds": [{ "src": "app.ts", "use": "@vercel/node" }],
+    "routes": [
+      {
+        "src": "/api/(.*)",
+        "dest": "/src/routers/api.ts"
+      },
+      { "src": "/(.*)", "dest": "/app.ts" }
     ]
-}
+  }
+  

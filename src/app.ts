@@ -24,6 +24,7 @@ const { PAGE_COUNT = "5", PORT = "8000" } = process.env;
 
     // Register only the API route as the home page
     fastify.register(require("./routers/api").default, { prefix: "/" });
+	fastify.register(require("./routers/index").default, { prefix: "/docs" });
 
     try {
         await fastify.listen({
