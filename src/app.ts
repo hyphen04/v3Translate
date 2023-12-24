@@ -3,7 +3,7 @@ import PagePool from "./browser/pagepool";
 
 const fastify = Fastify({ logger: true });
 
-const { PAGE_COUNT = "5", PORT = "443" } = process.env;
+const { PAGE_COUNT = "5", PORT = "8000" } = process.env;
 
 (async () => {
 	console.log("connecting to puppeteer...");
@@ -28,7 +28,7 @@ const { PAGE_COUNT = "5", PORT = "443" } = process.env;
 	try {
 		await fastify.listen({
 			port: Number(PORT),
-			host: "76.76.21.164",
+			host: "0.0.0.0",
 		});
 	} catch (err) {
 		fastify.log.error(err);
