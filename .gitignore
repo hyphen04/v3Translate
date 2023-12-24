@@ -76,3 +76,6 @@ typings/
 .fusebox/
 
 dist
+tmp
+node_modules
+.vercel
