@@ -1,23 +1,23 @@
-import dotenv from "dotenv";
-import Fastify from "fastify";
-import apiRouter from "../src/routers/api";
-import indexRouter from "../src/routers/index";
+// api/serverless.js
 
+"use strict";
+
+// Read the .env file.
+import * as dotenv from "dotenv";
 dotenv.config();
 
+// Require the framework
+import Fastify from "fastify";
+
+// Instantiate Fastify with some config
 const app = Fastify({
-  logger: false,
+    logger: true,
 });
 
-app.register(apiRouter, {
-  prefix: "/api",
-});
-
-app.register(indexRouter, {
-  prefix: "/",
-});
+// Register your application as a normal plugin.
+app.register(import("../src/app"));
 
 export default async (req, res) => {
-  await app.ready();
-  app.server.emit("request", req, res);
-};
+    await app.ready();
+    app.server.emit('request', req, res);
+}
