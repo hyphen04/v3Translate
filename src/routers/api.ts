@@ -1,116 +1,84 @@
-import type { FastifyPluginCallback } from "fastify";
-
-import { pagePool } from "../browser/pagepool";
-import { parsePage } from "../parser/parser";
+import express, { Request, Response, Router } from 'express';
+import { pagePool } from '../browser/pagepool';
+import { parsePage } from '../parser/parser';
 
 type Options = {
-	text: string;
-	from: string;
-	to: string;
-	lite: boolean;
+  text: string;
+  from: string;
+  to: string;
+  lite: boolean;
 };
 
-const handler = async (request: any, reply: any) => {
-	const options = {
-		...request.query,
-		...request.body,
-	};
-	const { text, from = "auto", to = "es", lite = false } = options;
+const handler = async (req: Request, res: Response) => {
+  const options = {
+    ...req.query,
+    ...req.body,
+  } as Options;
+  const { text, from = 'auto', to = 'es', lite = false } = options;
 
-	if (!text) {
-		reply
-			.code(400)
-			.header("Content-Type", "application/json; charset=utf-8")
-			.send({
-				error: 1,
-				message: "text is required",
-			});
-		return;
-	}
+  if (!text) {
+    res.status(400).json({
+      error: 1,
+      message: 'text is required',
+    });
+    return;
+  }
 
-	const page = pagePool.getPage();
-	if (!page) {
-		reply
-			.code(400)
-			.header("Content-Type", "application/json; charset=utf-8")
-			.send({
-				error: 1,
-				message:
-					"We're running out of resources. Please wait for a moment and retry.",
-			});
-		return;
-	}
+  const page = pagePool.getPage();
+  if (!page) {
+    res.status(400).json({
+      error: 1,
+      message:
+        "We're running out of resources. Please wait for a moment and retry.",
+    });
+    return;
+  }
 
-	let response: Record<string, any>;
-	try {
-		const res = await parsePage(page, { text, from, to, lite });
-		response = {
-			result: res.result,
-			pronunciation: res.pronunciation,
-			from: {
-				// iso: res.fromISO,
-				pronunciation: res.fromPronunciation,
-				didYouMean: res.fromDidYouMean,
-				suggestions: res.fromSuggestions,
-			},
-			definitions: res.definitions,
-			examples: res.examples,
-			translations: res.translations,
-		};
+  let response: Record<string, any>;
+  try {
+    const result = await parsePage(page, { text, from, to, lite });
+    response = {
+      result: result.result,
+      pronunciation: result.pronunciation,
+      from: {
+        pronunciation: result.fromPronunciation,
+        didYouMean: result.fromDidYouMean,
+        suggestions: result.fromSuggestions,
+      },
+      definitions: result.definitions,
+      examples: result.examples,
+      translations: result.translations,
+    };
 
-		Object.keys(response).forEach((key) => {
-			if (
-				response[key] === undefined ||
-				(typeof response[key] === "object" &&
-					Object.keys(response[key]).length === 0) ||
-				(Array.isArray(response[key]) && response[key].length === 0)
-			)
-				delete response[key];
-		});
+    Object.keys(response).forEach((key) => {
+      if (
+        response[key] === undefined ||
+        (typeof response[key] === 'object' &&
+          Object.keys(response[key]).length === 0) ||
+        (Array.isArray(response[key]) && response[key].length === 0)
+      )
+        delete response[key];
+    });
 
-		reply
-			.code(200)
-			.header("Content-Type", "application/json; charset=utf-8")
-			.send(response);
-	} catch (e) {
-		throw e;
-	} finally {
-		pagePool.releasePage(page);
-	}
+    res.status(200).json(response);
+  } catch (e) {
+    throw e;
+  } finally {
+    pagePool.releasePage(page);
+  }
 };
 
-export default ((fastify, opts, done) => {
-	fastify.route<{
-		Querystring: Options;
-	}>({
-		method: "GET",
-		url: "/",
-		schema: {
-			querystring: {
-				text: { type: "string" },
-				from: { type: "string" },
-				to: { type: "string" },
-				lite: { type: "boolean" },
-			},
-		},
-		handler,
-	});
+const router = Router();
 
-	fastify.route<{
-		Body: Options;
-	}>({
-		method: "POST",
-		url: "/",
-		schema: {
-			body: {
-				text: { type: "string" },
-				from: { type: "string" },
-				to: { type: "string" },
-				lite: { type: "boolean" },
-			},
-		},
-		handler,
-	});
+router.use(express.json()); // Add this line
+router.use(express.urlencoded({ extended: true })); // Add this line
 
-	done();
-}) as FastifyPluginCallback;
+router.get('/', async (req: Request, res: Response) => {
+  await handler(req, res);
+});
+
+router.post('/', async (req: Request, res: Response) => {
+  await handler(req, res);
+});
+
+export default router;
