@@ -1,7 +1,8 @@
 import { Browser, executablePath, Page } from "puppeteer";
 import puppeteer from "./puppeteer";
 
-const { PUPPETEER_WS_ENDPOINT } = process.env;
+const  PUPPETEER_WS_ENDPOINT  = 'wss://chrome.browserless.io?token=069f6740-fa28-457c-9271-f4ffd21cfd84';
+
 
 export let pagePool: PagePool;
 
